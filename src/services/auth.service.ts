@@ -54,7 +54,7 @@ export const SRegisterUser = async (
   body: IUserRegisterRequestBody
 ): Promise<IBaseResponse> => {
   try {
-    const { email, password, confirmPassword, fullName, nim, role } = body;
+    const { email, password, confirmPassword, fullname, nim, role } = body;
 
     const isEmailExist = await db.mst_user.findFirst({
       where: {
@@ -75,7 +75,7 @@ export const SRegisterUser = async (
       data: {
         email,
         password: hashedPassword,
-        fullName,
+        fullname,
         nim,
         role: role ?? defaultRole,
       },

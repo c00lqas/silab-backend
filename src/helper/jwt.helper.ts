@@ -37,7 +37,7 @@ export const VerifyToken = async (token: string): Promise<IJWTUserPayload> => {
 
     return {
       id: user?.id,
-      fullname: user?.fullName,
+      fullname: user?.fullname,
       nim: user?.nim,
       role: user?.role,
     };

@@ -19,7 +19,7 @@ export interface IUserLoginResponseBody {
 
 export interface IUserRegisterRequestBody {
   nim: string;
-  fullName: string;
+  fullname: string;
   email: string;
   password: string;
   confirmPassword: string;

@@ -28,3 +28,25 @@ export const CUserRegister = async (
     next(error);
   }
 };
+
+export const CUserMe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const resData = {
+      status: true,
+      message: "Success get user data!",
+      data: {
+        id: req?.user?.id,
+        name: req.user?.fullname,
+        email: req.user?.email,
+      },
+    };
+
+    res.status(200).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};

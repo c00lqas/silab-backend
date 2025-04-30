@@ -10,11 +10,32 @@ datasource db {
 
 model mst_user {
     id       String   @id @default(uuid())
-    fullName String
-    nim      String
-    email    String
+    fullname String
+    nim      String   @unique
+    email    String   @unique
     password String
     role     UserRole
+
+    subjectLecturer  mst_subject[] @relation(name: "SubjectLecturer")
+    subjectUpdatedBy mst_subject[] @relation(name: "SubjectUpdatedBy")
+    subjectCreatedBy mst_subject[] @relation(name: "SubjectCreatedBy")
+}
+
+model mst_subject {
+    id           String    @id @default(uuid())
+    subject_code String
+    subject_name String
+    semester     String
+    lecturer_id  String
+    updated_by   String?
+    created_by   String
+    updated_at   DateTime?
+    created_at   DateTime? @default(now())
+    deleted_at   DateTime?
+
+    lecturer  mst_user  @relation(name: "SubjectLecturer", fields: [lecturer_id], references: [id])
+    updatedBy mst_user? @relation(name: "SubjectUpdatedBy", fields: [updated_by], references: [id])
+    createdBy mst_user  @relation(name: "SubjectCreatedBy", fields: [created_by], references: [id])
 }
 
 enum UserRole {
