@@ -8,6 +8,26 @@ datasource db {
     directUrl = env("DIRECT_URL")
 }
 
+enum UserRole {
+    MAHASISWA
+    LABORAN
+    ASISTEN
+    DOSEN
+}
+
+enum ClassRoom {
+    PSI
+    SBTI
+}
+
+enum DaysOfWeek {
+    MONDAY
+    TUESDAY
+    WEDNESDAY
+    THURSDAY
+    FRIDAY
+}
+
 model mst_user {
     id       String   @id @default(uuid())
     fullname String
@@ -16,9 +36,12 @@ model mst_user {
     password String
     role     UserRole
 
-    subjectLecturer  mst_subject[] @relation(name: "SubjectLecturer")
-    subjectUpdatedBy mst_subject[] @relation(name: "SubjectUpdatedBy")
-    subjectCreatedBy mst_subject[] @relation(name: "SubjectCreatedBy")
+    subjectLecturer  mst_subject[]            @relation(name: "SubjectLecturer")
+    subjectUpdatedBy mst_subject[]            @relation(name: "SubjectUpdatedBy")
+    subjectCreatedBy mst_subject[]            @relation(name: "SubjectCreatedBy")
+    classEnrollments trn_class_participants[] @relation(name: "UserEnrollments")
+
+    @@index([id, nim])
 }
 
 model mst_subject {
@@ -36,10 +59,40 @@ model mst_subject {
     lecturer  mst_user  @relation(name: "SubjectLecturer", fields: [lecturer_id], references: [id])
     updatedBy mst_user? @relation(name: "SubjectUpdatedBy", fields: [updated_by], references: [id])
     createdBy mst_user  @relation(name: "SubjectCreatedBy", fields: [created_by], references: [id])
+
+    @@index([id, subject_code])
 }
 
-enum UserRole {
-    MAHASISWA
-    LABORAN
-    ASISTEN
+model mst_class {
+    id         String     @id @default(uuid())
+    subjectId  String
+    name       String
+    quota      Int
+    day        DaysOfWeek
+    startAt    String
+    endAt      String
+    room       ClassRoom
+    updated_by String?
+    created_by String
+    updated_at DateTime?
+    created_at DateTime?  @default(now())
+    deleted_at DateTime?
+
+    participants trn_class_participants[] @relation(name: "ClassParticipants")
+
+    @@index([id, subjectId])
+}
+
+model trn_class_participants {
+    classId    String
+    userId     String
+    createdAt  DateTime  @default(now())
+    updated_at DateTime?
+    deleted_at DateTime?
+
+    class mst_class @relation(name: "ClassParticipants", fields: [classId], references: [id])
+    user  mst_user  @relation(name: "UserEnrollments", fields: [userId], references: [id])
+
+    @@unique([classId, userId])
+    @@index([classId, userId])
 }

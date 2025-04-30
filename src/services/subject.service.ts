@@ -53,6 +53,9 @@ export const SGetSubject = async (): Promise<
 > => {
   try {
     const subjects = await db.mst_subject.findMany({
+      where: {
+        deleted_at: null,
+      },
       include: {
         lecturer: true,
       },
@@ -83,6 +86,7 @@ export const SGetSubjectById = async (
     const subjectData = await db.mst_subject.findUnique({
       where: {
         id,
+        deleted_at: null,
       },
       include: {
         lecturer: true,
