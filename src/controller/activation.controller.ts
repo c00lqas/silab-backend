@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import {
-  SAddClass,
-  SGetAllClasses,
-  SGetClassById,
-} from "../services/class.service";
+  SAddStudentActivation,
+  SGetAllActivations,
+  SUpdateActivationPaymentStatus,
+} from "../services/activation.service";
 
-export const CAddClass = async (
+export const CAddActivation = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const resData = await SAddClass(req.body, req);
+    const resData = await SAddStudentActivation(req.body, req);
 
     res.status(201).json(resData);
   } catch (error: any) {
@@ -19,13 +19,13 @@ export const CAddClass = async (
   }
 };
 
-export const CGetAllClasses = async (
+export const CGetAllActivations = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const resData = await SGetAllClasses();
+    const resData = await SGetAllActivations(req);
 
     res.status(200).json(resData);
   } catch (error: any) {
@@ -33,18 +33,16 @@ export const CGetAllClasses = async (
   }
 };
 
-export const CGetClassById = async (
+export const CUpdateActivationPaymentStatus = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const id = req.params.id.toString();
-
-    const resData = await SGetClassById(id);
+    const resData = await SUpdateActivationPaymentStatus(req);
 
     res.status(200).json(resData);
-  } catch (error: any) {
+  } catch (error) {
     next(error);
   }
 };

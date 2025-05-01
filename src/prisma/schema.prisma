@@ -40,6 +40,7 @@ model mst_user {
     subjectUpdatedBy mst_subject[]            @relation(name: "SubjectUpdatedBy")
     subjectCreatedBy mst_subject[]            @relation(name: "SubjectCreatedBy")
     classEnrollments trn_class_participants[] @relation(name: "UserEnrollments")
+    userActivation   trn_activations[]        @relation(name: "UserActivation")
 
     @@index([id, nim])
 }
@@ -56,9 +57,10 @@ model mst_subject {
     created_at   DateTime? @default(now())
     deleted_at   DateTime?
 
-    lecturer  mst_user  @relation(name: "SubjectLecturer", fields: [lecturer_id], references: [id])
-    updatedBy mst_user? @relation(name: "SubjectUpdatedBy", fields: [updated_by], references: [id])
-    createdBy mst_user  @relation(name: "SubjectCreatedBy", fields: [created_by], references: [id])
+    lecturer          mst_user          @relation(name: "SubjectLecturer", fields: [lecturer_id], references: [id])
+    updatedBy         mst_user?         @relation(name: "SubjectUpdatedBy", fields: [updated_by], references: [id])
+    createdBy         mst_user          @relation(name: "SubjectCreatedBy", fields: [created_by], references: [id])
+    subjectActivation trn_activations[] @relation(name: "SubjectActivation")
 
     @@index([id, subject_code])
 }
@@ -95,4 +97,21 @@ model trn_class_participants {
 
     @@unique([classId, userId])
     @@index([classId, userId])
+}
+
+model trn_activations {
+    id         String    @id @default(uuid())
+    userId     String
+    subjectId  String
+    status     Boolean   @default(false)
+    createdAt  DateTime  @default(now())
+    updated_at DateTime?
+    deleted_at DateTime?
+
+    user    mst_user    @relation(name: "UserActivation", fields: [userId], references: [id])
+    subject mst_subject @relation(name: "SubjectActivation", fields: [subjectId], references: [id])
+
+    @@unique([userId, subjectId])
+    @@index([userId])
+    @@index([subjectId])
 }

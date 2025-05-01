@@ -13,7 +13,7 @@ export const CAddSubject = async (
   try {
     const resData = await SAddSubject(req.body, req);
 
-    res.status(200).json(resData);
+    res.status(201).json(resData);
   } catch (error: any) {
     next(error);
   }
