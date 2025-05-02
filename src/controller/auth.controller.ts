@@ -42,6 +42,7 @@ export const CUserMe = async (
         id: req?.user?.id,
         name: req.user?.fullname,
         email: req.user?.email,
+        role: req.user?.role,
       },
     };
 

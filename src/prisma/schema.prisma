@@ -36,11 +36,12 @@ model mst_user {
     password String
     role     UserRole
 
-    subjectLecturer  mst_subject[]            @relation(name: "SubjectLecturer")
-    subjectUpdatedBy mst_subject[]            @relation(name: "SubjectUpdatedBy")
-    subjectCreatedBy mst_subject[]            @relation(name: "SubjectCreatedBy")
-    classEnrollments trn_class_participants[] @relation(name: "UserEnrollments")
-    userActivation   trn_activations[]        @relation(name: "UserActivation")
+    subjectLecturer          mst_subject[]              @relation(name: "SubjectLecturer")
+    subjectUpdatedBy         mst_subject[]              @relation(name: "SubjectUpdatedBy")
+    subjectCreatedBy         mst_subject[]              @relation(name: "SubjectCreatedBy")
+    classEnrollments         trn_class_participants[]   @relation(name: "UserEnrollments")
+    userActivation           trn_activations[]          @relation(name: "UserActivation")
+    trn_meeting_participants trn_meeting_participants[] @relation(name: "MeetingParticipants")
 
     @@index([id, nim])
 }
@@ -61,6 +62,7 @@ model mst_subject {
     updatedBy         mst_user?         @relation(name: "SubjectUpdatedBy", fields: [updated_by], references: [id])
     createdBy         mst_user          @relation(name: "SubjectCreatedBy", fields: [created_by], references: [id])
     subjectActivation trn_activations[] @relation(name: "SubjectActivation")
+    mst_class         mst_class[]
 
     @@index([id, subject_code])
 }
@@ -81,6 +83,8 @@ model mst_class {
     deleted_at DateTime?
 
     participants trn_class_participants[] @relation(name: "ClassParticipants")
+    trn_meetings trn_meetings[]           @relation(name: "ClassMeeting")
+    subject      mst_subject              @relation(fields: [subjectId], references: [id])
 
     @@index([id, subjectId])
 }
@@ -114,4 +118,33 @@ model trn_activations {
     @@unique([userId, subjectId])
     @@index([userId])
     @@index([subjectId])
+}
+
+model trn_meetings {
+    id         String    @id @default(uuid())
+    classId    String
+    name       String
+    token      String
+    status     Boolean   @default(false)
+    createdAt  DateTime  @default(now())
+    updated_at DateTime?
+    deleted_at DateTime?
+
+    class        mst_class                  @relation("ClassMeeting", fields: [classId], references: [id])
+    participants trn_meeting_participants[] @relation("MeetingParticipants")
+
+    @@index([id, classId])
+}
+
+model trn_meeting_participants {
+    meetingId String
+    userId    String
+    status    Boolean
+    createdAt DateTime @default(now())
+
+    meeting trn_meetings @relation("MeetingParticipants", fields: [meetingId], references: [id])
+    user    mst_user     @relation("MeetingParticipants", fields: [userId], references: [id])
+
+    @@unique([meetingId, userId])
+    @@index([meetingId, userId])
 }

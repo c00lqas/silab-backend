@@ -10,6 +10,7 @@ import {
   IAddActivationRequestBody,
   IGetActivationResponseBody,
 } from "../interfaces/activation.interface";
+import { Prisma } from "@prisma/client";
 
 export const SAddStudentActivation = async (
   body: IAddActivationRequestBody,
@@ -60,11 +61,22 @@ export const SGetAllActivations = async (
 ): Promise<IBaseResponse<IGetActivationResponseBody[]>> => {
   try {
     const user = req.user;
+    const statusQuery = req.query.status;
+    const nameQuery = req.query.name?.toString();
 
     const whereCondition = {
       deleted_at: null,
       ...(user?.role === "MAHASISWA" && {
         userId: user.id,
+      }),
+      ...(statusQuery ? { status: statusQuery === "true" } : {}),
+      ...(nameQuery && {
+        user: {
+          fullname: {
+            contains: nameQuery,
+            mode: Prisma.QueryMode.insensitive,
+          },
+        },
       }),
     };
 
