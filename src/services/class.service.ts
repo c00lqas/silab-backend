@@ -20,18 +20,19 @@ export const SAddClass = async (
   req: Request
 ): Promise<IBaseResponse> => {
   try {
-    const { name, room, day } = body;
+    const { name, room, day, subjectId } = body;
 
     if (req.user?.role !== "LABORAN")
       throw new UnauthorizedError("User not allowed to add subject");
 
-    const isSubjectExist = await db.mst_class.findFirst({
+    const isClassExist = await db.mst_class.findFirst({
       where: {
         name: name,
+        subjectId: subjectId,
       },
     });
 
-    if (isSubjectExist) throw new ConflictError("Subject already exist");
+    if (isClassExist) throw new ConflictError("Class on subject already exist");
 
     await db.mst_class.create({
       data: {

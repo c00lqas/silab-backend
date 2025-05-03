@@ -5,6 +5,8 @@ import SubjectRoute from "../src/routes/subject.route";
 import ClassRoute from "../src/routes/class.route";
 import ActivationRoute from "../src/routes/activation.route";
 import MeetingRoute from "../src/routes/meeting.route";
+import UserRoute from "../src/routes/user.route";
+import AnnouncementRoute from "../src/routes/announcement.route";
 import cors from "cors";
 
 const app = express();
@@ -19,5 +21,7 @@ app.use("/subject", SubjectRoute);
 app.use("/class", ClassRoute);
 app.use("/activation", ActivationRoute);
 app.use("/meeting", MeetingRoute);
+app.use("/user", UserRoute);
+app.use("/announcement", AnnouncementRoute);
 
 app.use(errorHandler);

@@ -28,6 +28,13 @@ enum DaysOfWeek {
     FRIDAY
 }
 
+enum AnnouncementTypes {
+    ASSISTANT
+    PRACTICUM
+    INHALL
+    BASIC
+}
+
 model mst_user {
     id       String   @id @default(uuid())
     fullname String
@@ -42,6 +49,7 @@ model mst_user {
     classEnrollments         trn_class_participants[]   @relation(name: "UserEnrollments")
     userActivation           trn_activations[]          @relation(name: "UserActivation")
     trn_meeting_participants trn_meeting_participants[] @relation(name: "MeetingParticipants")
+    mst_announcement         mst_announcement[]         @relation(name: "AnnouncementAuthor")
 
     @@index([id, nim])
 }
@@ -147,4 +155,17 @@ model trn_meeting_participants {
 
     @@unique([meetingId, userId])
     @@index([meetingId, userId])
+}
+
+model mst_announcement {
+    id         String            @id @default(uuid())
+    type       AnnouncementTypes
+    title      String
+    body       String
+    author     String
+    createdAt  DateTime          @default(now())
+    updated_at DateTime?
+    deleted_at DateTime?
+
+    announcementAuthor mst_user @relation(name: "AnnouncementAuthor", fields: [author], references: [id])
 }
